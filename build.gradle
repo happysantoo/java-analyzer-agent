@@ -1,0 +1,120 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.0'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.example'
+version = '1.0.0'
+
+java {
+	sourceCompatibility = '21'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+}
+
+ext {
+	set('springAiVersion', "1.0.0-M4")
+}
+
+dependencies {
+	// Spring Boot Starters
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-logging'
+
+	// Spring AI Dependencies
+	implementation "org.springframework.ai:spring-ai-openai-spring-boot-starter"
+	implementation "org.springframework.ai:spring-ai-anthropic-spring-boot-starter"
+
+	// Java Parser for AST analysis
+	implementation 'com.github.javaparser:javaparser-core:3.25.7'
+	implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.7'
+
+	// YAML Configuration (included in Spring Boot)
+	implementation 'org.yaml:snakeyaml'
+
+	// JSON Processing (included in Spring Boot)
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+	// Command Line Interface
+	implementation 'org.springframework.shell:spring-shell-starter:3.2.0'
+
+	// Apache Commons for file utilities
+	implementation 'org.apache.commons:commons-lang3'
+	implementation 'commons-io:commons-io:2.11.0'
+
+	// Testing
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// Custom tasks for compatibility with existing scripts
+task scanConcurrency(type: JavaExec) {
+	description = 'Run the Java Concurrency Scanner'
+	group = 'application'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.example.scanner.JavaConcurrencyScannerApplication'
+	
+	// Allow passing arguments from command line
+	if (project.hasProperty('scanPath')) {
+		args '--scan-path', project.scanPath
+	}
+	if (project.hasProperty('outputPath')) {
+		args '--output', project.outputPath
+	}
+	if (project.hasProperty('configPath')) {
+		args '--config', project.configPath
+	}
+}
+
+// Task to run with example arguments
+task runExample(type: JavaExec) {
+	description = 'Run the scanner with example arguments'
+	group = 'application'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.example.scanner.JavaConcurrencyScannerApplication'
+	args '--scan-path', './src', '--output', './concurrency-report.html'
+}
+
+// Ensure proper compilation order and include resources
+compileJava {
+	options.encoding = 'UTF-8'
+}
+
+compileTestJava {
+	options.encoding = 'UTF-8'
+}
+
+// Configure the bootJar task to create an executable JAR
+bootJar {
+	archiveFileName = "${project.name}-${project.version}.jar"
+	mainClass = 'com.example.scanner.JavaConcurrencyScannerApplication'
+}
+
+// Configure the jar task (for library usage)
+jar {
+	enabled = false
+	archiveClassifier = ''
+}

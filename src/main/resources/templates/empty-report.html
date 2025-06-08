@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Concurrency Scanner - No Issues Found</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8fdf9;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .success-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        .content {
+            padding: 40px;
+            text-align: center;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2ecc71;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2ecc71;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .recommendations {
+            background: #e8f5e8;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        .recommendations h3 {
+            color: #27ae60;
+            margin-top: 0;
+        }
+        .recommendations ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .recommendations li {
+            padding: 8px 0;
+            border-bottom: 1px solid #d4edda;
+        }
+        .recommendations li:last-child {
+            border-bottom: none;
+        }
+        .recommendations li::before {
+            content: "✓";
+            color: #27ae60;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="success-icon">✅</div>
+            <h1>No Concurrency Issues Found</h1>
+            <p>Your Java code appears to be thread-safe!</p>
+        </div>
+        
+        <div class="content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${scanStats.totalFiles}">0</div>
+                    <div class="stat-label">Files Scanned</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${scanStats.totalLines}">0</div>
+                    <div class="stat-label">Lines Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${scanStats.totalMethods}">0</div>
+                    <div class="stat-label">Methods Checked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" th:text="${scanStats.scanDurationMs}">0</div>
+                    <div class="stat-label">Scan Time (ms)</div>
+                </div>
+            </div>
+            
+            <div class="recommendations">
+                <h3>Best Practices to Maintain Thread Safety</h3>
+                <ul>
+                    <li>Continue using immutable objects where possible</li>
+                    <li>Keep using thread-safe collections (ConcurrentHashMap, CopyOnWriteArrayList)</li>
+                    <li>Maintain proper synchronization for shared mutable state</li>
+                    <li>Use atomic classes for simple concurrent operations</li>
+                    <li>Consider using higher-level concurrency utilities from java.util.concurrent</li>
+                    <li>Regular code reviews focusing on concurrency patterns</li>
+                    <li>Run this scanner periodically as your codebase evolves</li>
+                </ul>
+            </div>
+            
+            <p style="font-size: 1.1em; color: #666;">
+                <strong>Scanned Directory:</strong> <span th:text="${analysisResult.directoryPath}">/path/to/project</span>
+            </p>
+            <p style="font-size: 0.9em; color: #888;">
+                Scan completed at <span th:text="${analysisResult.timestamp}">timestamp</span>
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p>Powered by Java Concurrency Scanner AI Agent</p>
+        </div>
+    </div>
+</body>
+</html>

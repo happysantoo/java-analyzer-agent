@@ -1,0 +1,59 @@
+scanner:
+  exclude-test-files: true
+  exclude-generated-code: true
+  max-file-size: 10000000
+  enable-ai-recommendations: true
+  ai-model: "claude-3-sonnet"
+  exclude-patterns:
+    - "/target/"
+    - "/build/"
+    - ".git"
+    - "/node_modules/"
+
+# Concurrency analysis rules configuration
+analysis:
+  thread-safety:
+    check-race-conditions: true
+    check-shared-mutable-state: true
+    check-unsafe-publication: true
+  
+  synchronization:
+    check-deadlock-potential: true
+    check-synchronized-blocks: true
+    check-double-checked-locking: true
+  
+  collections:
+    warn-unsafe-collections: true
+    suggest-concurrent-alternatives: true
+  
+  executor-framework:
+    check-thread-pool-management: true
+    check-proper-shutdown: true
+  
+  atomic-operations:
+    suggest-atomic-alternatives: true
+    check-compare-and-swap: true
+  
+  locks:
+    check-lock-ordering: true
+    check-try-finally-pattern: true
+    check-timeout-usage: true
+
+# Spring AI configuration
+spring:
+  ai:
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY}
+      chat:
+        options:
+          model: claude-3-sonnet-20240229
+          temperature: 0.1
+          max-tokens: 2000
+
+# Report generation settings
+report:
+  template: "concurrency-report-template.html"
+  include-code-snippets: true
+  max-snippet-lines: 10
+  highlight-syntax: true
+  include-statistics: true

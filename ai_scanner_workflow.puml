@@ -1,0 +1,158 @@
+@startuml Java_Concurrency_Scanner_Agent_Workflow
+
+title Java Concurrency Analysis Agent - Activity Diagram
+
+start
+
+:User initiates Java concurrency scan;
+:Parse command line arguments
+(java-project-path, output, config);
+
+partition "Input Validation" {
+    if (Valid Java project path?) then (yes)
+        :Load concurrency analysis configuration
+        from scanner_config.yaml;
+    else (no)
+        :Display error message;
+        stop
+    endif
+}
+
+partition "Java File Discovery" {
+    :Initialize Java Scanner Agent;
+    :Recursively discover files in project;
+    
+    if (Files found?) then (yes)
+        :Filter for Java files only
+        (*.java extensions);
+        :Exclude test files and generated code
+        (optional based on config);
+    else (no)
+        :Generate empty concurrency report;
+        :Save HTML report;
+        stop
+    endif
+}
+
+partition "Java Source Analysis" {
+    :Parse Java files using AST;
+    
+    fork
+        :Extract class declarations
+        and inheritance hierarchy;
+    fork again
+        :Identify thread-related imports
+        (java.util.concurrent.*, java.lang.Thread);
+    fork again
+        :Parse method signatures
+        for synchronized keywords;
+    fork again
+        :Extract field declarations
+        (volatile, static fields);
+    end fork
+}
+
+partition "Concurrency Analysis Engine" {
+    :Load Java concurrency analysis rules;
+    
+    repeat
+        :Analyze current Java file;
+        
+        fork
+            :Check Thread Safety Issues
+            (race conditions, shared mutable state);
+        fork again
+            :Check Synchronization Problems
+            (deadlocks, synchronized block issues);
+        fork again
+            :Check Concurrent Collections Usage
+            (ConcurrentHashMap vs HashMap);
+        fork again
+            :Check Executor Framework Usage
+            (thread pool management);
+        fork again
+            :Check Atomic Operations
+            (AtomicInteger, AtomicReference usage);
+        fork again
+            :Check Lock Usage
+            (ReentrantLock, ReadWriteLock patterns);
+        end fork
+        
+        :Generate line-by-line concurrency findings
+        with class name, method, and line numbers;
+        
+        :Apply AI-powered concurrency recommendations
+        using Java best practices;
+        
+        :Store concurrency analysis results;
+        
+    repeat while (More Java files to analyze?) is (yes)
+    -> no;
+}
+
+partition "Concurrency Report Generation" {
+    :Initialize Java Concurrency Report Generator;
+    :Load HTML template for concurrency analysis;
+    
+    fork
+        :Generate concurrency executive summary
+        (total classes analyzed, thread safety issues);
+    fork again
+        :Create class-level concurrency reports
+        (thread-safe classes, problematic classes);
+    fork again
+        :Generate method-level analysis
+        (synchronized methods, lock usage);
+    fork again
+        :Create line-by-line concurrency details
+        with Java syntax highlighting;
+    fork again
+        :Compile concurrency recommendations
+        (thread safety fixes, performance optimizations);
+    end fork
+    
+    :Merge all concurrency report sections;
+    :Apply specialized CSS for Java code
+    and concurrency visualization;
+}
+
+partition "Output & Finalization" {
+    :Generate final Java concurrency HTML report;
+    
+    if (Output file writable?) then (yes)
+        :Save concurrency report to specified path;
+        :Display success message
+        with report location and summary;
+    else (no)
+        :Display error message;
+        :Suggest alternative path;
+        stop
+    endif
+}
+
+partition "Error Handling & Logging" {
+    note right
+        **Anthropic Agent Design Principles for Java Concurrency:**
+        - Robust error handling for AST parsing failures
+        - Clear error messages with Java-specific context
+        - Graceful degradation on compilation errors
+        - Comprehensive logging for concurrency analysis
+        - Specialized handling for complex concurrency patterns
+    end note
+    
+    if (Any critical parsing or analysis errors?) then (yes)
+        :Log Java-specific error details;
+        :Generate partial concurrency report
+        with error summary and analyzed files;
+    else (no)
+        :Log successful concurrency analysis completion;
+    endif
+}
+
+:Display final concurrency statistics
+(Java files scanned, concurrency issues found, 
+thread safety recommendations generated);
+
+stop
+
+@enduml
