@@ -129,3 +129,10 @@ jar {
 	enabled = false
 	archiveClassifier = ''
 }
+
+// Task to run the Spring filtering demo
+task runSpringFilterDemo(type: JavaExec) {
+	mainClass = 'com.example.scanner.demo.SpringFilteringDemo'
+	classpath = sourceSets.main.runtimeClasspath
+	workingDir = project.rootDir
+}

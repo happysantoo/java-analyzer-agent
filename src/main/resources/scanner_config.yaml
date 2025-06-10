@@ -4,6 +4,16 @@ scanner:
   max-file-size: 10000000
   enable-ai-recommendations: true
   ai-model: "claude-3-sonnet"
+  # Spring annotation filtering configuration
+  spring-filter:
+    enabled: false  # Set to true to analyze only Spring-managed classes
+    annotations:    # Configurable list of Spring annotations to filter
+      - "Service"
+      - "Component" 
+      - "Repository"
+      - "Controller"
+      - "RestController"
+      - "Configuration"
   exclude-patterns:
     - "/target/"
     - "/build/"
@@ -54,6 +64,6 @@ spring:
 report:
   template: "concurrency-report-template.html"
   include-code-snippets: true
-  max-snippet-lines: 10
+  max-snippet-lines: 100
   highlight-syntax: true
   include-statistics: true

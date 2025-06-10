@@ -5,6 +5,7 @@ An intelligent AI-powered system for analyzing Java code and detecting concurren
 ## 🚀 Features
 
 - **Comprehensive Concurrency Analysis**: Detects race conditions, deadlocks, and thread safety issues
+- **Spring Annotation Filtering**: Focus analysis on Spring-managed components (@Service, @Component, @Repository)
 - **AI-Powered Recommendations**: Uses Anthropic Claude for intelligent suggestions and best practices
 - **Detailed HTML Reports**: Beautiful, interactive reports with line-by-line analysis and syntax highlighting
 - **Multiple Analysis Engines**: 6 specialized analyzers for different concurrency patterns
@@ -65,6 +66,31 @@ The system follows Anthropic's efficient agent design guidelines with a modular 
    java -jar target/java-concurrency-scanner-1.0.0.jar ./test-samples
    ```
 
+## 🎯 Spring Annotation Filtering
+
+Focus your analysis on Spring-managed components for better signal-to-noise ratio:
+
+```java
+// Enable Spring filtering to analyze only annotated classes
+JavaSourceAnalysisService service = new JavaSourceAnalysisService();
+service.setSpringFilterEnabled(true);
+
+// Supported annotations: @Service, @Component, @Repository, 
+// @Controller, @RestController, @Configuration
+```
+
+**Benefits:**
+- **Focused Analysis**: Target business-critical Spring components
+- **Performance**: Faster analysis by processing fewer classes
+- **Better Results**: Higher quality findings in your service layer
+
+**Demo:**
+```bash
+./gradlew runSpringFilterDemo
+```
+
+See [SPRING_FILTERING.md](SPRING_FILTERING.md) for detailed documentation.
+
 ## 🔍 Analysis Categories
 
 ### 1. Thread Safety Issues
@@ -117,6 +143,17 @@ scanner:
       - "**/target/**"
       - "**/build/**"
       - "**/*Test.java"
+  
+  # Spring annotation filtering
+  spring-filter:
+    enabled: false  # Set to true to analyze only Spring-managed classes
+    annotations:
+      - "Service"
+      - "Component"
+      - "Repository"
+      - "Controller"
+      - "RestController"
+      - "Configuration"
   
   rules:
     thread-safety:

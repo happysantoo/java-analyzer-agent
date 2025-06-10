@@ -48,6 +48,14 @@ public class JavaSourceAnalysisService {
         "java.util.concurrent.CompletableFuture"
     );
     
+    // Spring annotations to filter for concurrency analysis
+    private static final Set<String> SPRING_MANAGED_ANNOTATIONS = Set.of(
+        "Service", "Component", "Repository", "Controller", "RestController", "Configuration"
+    );
+    
+    // Configuration flag to enable/disable Spring filtering
+    private boolean enableSpringFilter = false;
+    
     /**
      * Analyzes a list of Java files and extracts source information for concurrency analysis.
      */
@@ -123,6 +131,7 @@ public class JavaSourceAnalysisService {
     
     /**
      * Extracts class information including methods and fields.
+     * Filters classes based on Spring annotations if enableSpringFilter is true.
      */
     private List<ClassInfo> extractClassInfo(CompilationUnit cu) {
         List<ClassInfo> classes = new ArrayList<>();
@@ -132,6 +141,15 @@ public class JavaSourceAnalysisService {
             classInfo.setName(classDecl.getNameAsString());
             classInfo.setInterface(classDecl.isInterface());
             classInfo.setLineNumber(classDecl.getBegin().map(pos -> pos.line).orElse(0));
+            
+            // Extract Spring annotations
+            extractSpringAnnotations(classDecl, classInfo);
+            
+            // Filter based on Spring annotations if enabled
+            if (enableSpringFilter && !classInfo.isSpringManaged()) {
+                logger.debug("Skipping non-Spring managed class: {}", classInfo.getName());
+                return; // Skip this class
+            }
             
             // Extract inheritance information
             classDecl.getExtendedTypes().forEach(extendedType -> 
@@ -147,8 +165,15 @@ public class JavaSourceAnalysisService {
             classInfo.setFields(extractFieldInfo(classDecl));
             
             classes.add(classInfo);
-            logger.debug("Extracted class: {} with {} methods and {} fields", 
-                        classInfo.getName(), classInfo.getMethods().size(), classInfo.getFields().size());
+            
+            if (classInfo.isSpringManaged()) {
+                logger.debug("Extracted Spring-managed class: {} with annotations: {} - {} methods and {} fields", 
+                    classInfo.getName(), classInfo.getSpringAnnotations(), 
+                    classInfo.getMethods().size(), classInfo.getFields().size());
+            } else {
+                logger.debug("Extracted class: {} with {} methods and {} fields", 
+                    classInfo.getName(), classInfo.getMethods().size(), classInfo.getFields().size());
+            }
         });
         
         return classes;
@@ -199,5 +224,36 @@ public class JavaSourceAnalysisService {
         });
         
         return fields;
+    }
+    
+    /**
+     * Extracts Spring annotations from a class declaration.
+     */
+    private void extractSpringAnnotations(ClassOrInterfaceDeclaration classDecl, ClassInfo classInfo) {
+        classDecl.getAnnotations().forEach(annotation -> {
+            String annotationName = annotation.getNameAsString();
+            
+            // Check if it's a Spring managed annotation
+            if (SPRING_MANAGED_ANNOTATIONS.contains(annotationName)) {
+                classInfo.addSpringAnnotation(annotationName);
+                logger.debug("Found Spring annotation @{} on class: {}", annotationName, classInfo.getName());
+            }
+        });
+    }
+    
+    /**
+     * Sets whether to filter classes based on Spring annotations.
+     * @param enabled true to analyze only Spring-managed classes, false to analyze all classes
+     */
+    public void setSpringFilterEnabled(boolean enabled) {
+        this.enableSpringFilter = enabled;
+        logger.info("Spring annotation filtering {}", enabled ? "enabled" : "disabled");
+    }
+    
+    /**
+     * Returns whether Spring annotation filtering is enabled.
+     */
+    public boolean isSpringFilterEnabled() {
+        return enableSpringFilter;
     }
 }
