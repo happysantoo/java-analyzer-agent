@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'groovy'
 	id 'org.springframework.boot' version '3.5.0'
 	id 'io.spring.dependency-management' version '1.1.4'
 }
@@ -58,6 +59,11 @@ dependencies {
 	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	
+	// Spock Framework for BDD testing
+	testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+	testImplementation 'org.spockframework:spock-spring:2.3-groovy-4.0'
+	testImplementation 'org.apache.groovy:groovy-all:4.0.15'
 }
 
 dependencyManagement {
@@ -68,6 +74,11 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	// Enable test logging
+
+	afterTest { 
+		desc,result -> println "Test ${desc.className}.${desc.name} finished with result: ${result.resultType}"
+	}
 }
 
 // Custom tasks for compatibility with existing scripts

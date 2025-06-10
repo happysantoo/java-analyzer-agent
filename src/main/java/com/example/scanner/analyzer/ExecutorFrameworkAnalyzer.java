@@ -20,7 +20,8 @@ public class ExecutorFrameworkAnalyzer {
         List<ConcurrencyIssue> issues = new ArrayList<>();
         
         // Check for executor service usage
-        if (sourceInfo.getThreadRelatedImports().stream().anyMatch(imp -> imp.contains("Executor"))) {
+        if (sourceInfo.getThreadRelatedImports().stream().anyMatch(imp -> 
+            imp.contains("Executor") || imp.contains("ForkJoinPool"))) {
             issues.addAll(checkExecutorUsage(sourceInfo, classInfo));
         }
         
@@ -32,7 +33,10 @@ public class ExecutorFrameworkAnalyzer {
         
         // Check if ExecutorService fields are properly managed
         for (FieldInfo field : classInfo.getFields()) {
-            if (field.getType().contains("ExecutorService") || field.getType().contains("ThreadPoolExecutor")) {
+            if (field.getType().contains("ExecutorService") || 
+                field.getType().contains("ThreadPoolExecutor") ||
+                field.getType().contains("ForkJoinPool") ||
+                field.getType().contains("ScheduledExecutorService")) {
                 boolean hasShutdownMethod = classInfo.getMethods().stream()
                     .anyMatch(method -> method.getName().contains("shutdown") || method.getName().contains("close"));
                 

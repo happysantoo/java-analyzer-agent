@@ -25,6 +25,11 @@ public class JavaFileDiscoveryService {
     @Autowired
     private ScannerConfiguration configuration;
     
+    // Setter for testing
+    public void setConfiguration(ScannerConfiguration configuration) {
+        this.configuration = configuration;
+    }
+    
     /**
      * Recursively discovers Java files in the specified project directory.
      * Filters for *.java extensions and optionally excludes test files.
@@ -46,8 +51,7 @@ public class JavaFileDiscoveryService {
         
         return javaFiles;
     }
-    
-    /**
+     /**
      * Determines if a file should be included based on configuration.
      * Excludes test files and generated code if configured to do so.
      */
@@ -56,11 +60,13 @@ public class JavaFileDiscoveryService {
         
         // Exclude test files if configured
         if (configuration.isExcludeTestFiles()) {
+            String fileNameOnly = filePath.getFileName().toString().toLowerCase();
             if (fileName.contains("/test/") || 
                 fileName.contains("\\test\\") ||
-                fileName.endsWith("test.java") ||
-                fileName.endsWith("tests.java") ||
-                fileName.contains("test")) {
+                fileNameOnly.endsWith("test.java") ||
+                fileNameOnly.endsWith("tests.java") ||
+                fileNameOnly.startsWith("test") ||
+                fileNameOnly.contains("test.")) {
                 logger.debug("Excluding test file: {}", filePath);
                 return false;
             }
@@ -78,13 +84,18 @@ public class JavaFileDiscoveryService {
         }
         
         // Exclude specific patterns from configuration
-        for (String excludePattern : configuration.getExcludePatterns()) {
-            if (fileName.contains(excludePattern.toLowerCase())) {
-                logger.debug("Excluding file matching pattern '{}': {}", excludePattern, filePath);
-                return false;
+        List<String> excludePatterns = configuration.getExcludePatterns();
+        if (excludePatterns != null) {
+            String fileNameOnly = filePath.getFileName().toString().toLowerCase();
+            for (String excludePattern : excludePatterns) {
+                if (excludePattern != null && fileNameOnly.contains(excludePattern.toLowerCase())) {
+                    logger.debug("Excluding file matching pattern '{}': {}", excludePattern, filePath);
+                    return false;
+                }
             }
         }
         
+        logger.debug("Including file: {}", filePath);
         return true;
     }
 }

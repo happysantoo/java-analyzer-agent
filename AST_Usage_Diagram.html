@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>AST Usage in Java Concurrency Scanner</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="ast-usage-in-java-concurrency-scanner">AST Usage in Java Concurrency Scanner</h1>
+<h2 id="how-abstract-syntax-tree-ast-powers-concurrency-analysis">How Abstract Syntax Tree (AST) Powers Concurrency Analysis</h2>
+<pre><code class="language-mermaid">graph TB
+    subgraph &quot;Input Layer&quot;
+        A[Java Source Files] --&gt; B[JavaParser Library]
+    end
+    
+    subgraph &quot;AST Parsing &amp; Processing&quot;
+        B --&gt; C[CompilationUnit&lt;br/&gt;Root AST Node]
+        C --&gt; D[Parse Result&lt;br/&gt;Validation]
+        D --&gt; E{Parse&lt;br/&gt;Successful?}
+        E --&gt;|No| F[Log Parse Errors&lt;br/&gt;Skip File]
+        E --&gt;|Yes| G[AST Traversal&lt;br/&gt;&amp; Extraction]
+    end
+    
+    subgraph &quot;AST Information Extraction&quot;
+        G --&gt; H[JavaSourceAnalysisService]
+        H --&gt; I[Extract Imports&lt;br/&gt;cu.getImports()]
+        H --&gt; J[Extract Classes&lt;br/&gt;cu.findAll(ClassOrInterfaceDeclaration)]
+        H --&gt; K[Extract Methods&lt;br/&gt;classDecl.findAll(MethodDeclaration)]
+        H --&gt; L[Extract Fields&lt;br/&gt;classDecl.findAll(FieldDeclaration)]
+    end
+    
+    subgraph &quot;AST Data Models&quot;
+        I --&gt; M[ThreadRelatedImports&lt;br/&gt;Set&amp;lt;String&amp;gt;]
+        J --&gt; N[ClassInfo&lt;br/&gt;• Name, Interface flag&lt;br/&gt;• Parent classes&lt;br/&gt;• Implemented interfaces&lt;br/&gt;• Line numbers]
+        K --&gt; O[MethodInfo&lt;br/&gt;• Name, Return type&lt;br/&gt;• synchronized keyword&lt;br/&gt;• static modifier&lt;br/&gt;• Parameter types]
+        L --&gt; P[FieldInfo&lt;br/&gt;• Name, Type&lt;br/&gt;• volatile keyword&lt;br/&gt;• static/final modifiers&lt;br/&gt;• Line numbers]
+    end
+    
+    subgraph &quot;Concurrency Analysis Engines&quot;
+        M --&gt; Q[ThreadSafetyAnalyzer]
+        N --&gt; Q
+        O --&gt; Q
+        P --&gt; Q
+        
+        M --&gt; R[SynchronizationAnalyzer]
+        N --&gt; R
+        O --&gt; R
+        P --&gt; R
+        
+        M --&gt; S[ConcurrentCollectionsAnalyzer]
+        N --&gt; S
+        P --&gt; S
+        
+        M --&gt; T[ExecutorFrameworkAnalyzer]
+        N --&gt; T
+        P --&gt; T
+        
+        M --&gt; U[AtomicOperationsAnalyzer]
+        N --&gt; U
+        P --&gt; U
+        
+        M --&gt; V[LockUsageAnalyzer]
+        N --&gt; V
+        P --&gt; V
+    end
+    
+    subgraph &quot;AST-Based Analysis Patterns&quot;
+        Q --&gt; W[&quot;Pattern Matching on AST Data:&lt;br/&gt;• Check field types for unsafe collections&lt;br/&gt;• Analyze method modifiers&lt;br/&gt;• Detect synchronization patterns&lt;br/&gt;• Identify race condition risks&quot;]
+        R --&gt; W
+        S --&gt; W
+        T --&gt; W
+        U --&gt; W
+        V --&gt; W
+    end
+    
+    subgraph &quot;Output&quot;
+        W --&gt; X[ConcurrencyIssue Objects&lt;br/&gt;• Type, Severity, Line#&lt;br/&gt;• Description&lt;br/&gt;• Suggested fixes]
+        X --&gt; Y[Analysis Results&lt;br/&gt;Aggregated by File]
+        Y --&gt; Z[HTML Report&lt;br/&gt;with source highlighting]
+    end
+    
+    style A fill:#e1f5fe
+    style C fill:#fff3e0
+    style G fill:#f3e5f5
+    style H fill:#e8f5e8
+    style W fill:#fff8e1
+    style X fill:#ffebee
+</code></pre>
+<h2 id="key-ast-usage-patterns">Key AST Usage Patterns</h2>
+<h3 id="1-file-level-ast-processing">1. <strong>File-Level AST Processing</strong></h3>
+<pre><code class="language-java"><span class="hljs-comment">// JavaSourceAnalysisService.java</span>
+ParseResult&lt;CompilationUnit&gt; parseResult = javaParser.parse(content);
+<span class="hljs-type">CompilationUnit</span> <span class="hljs-variable">cu</span> <span class="hljs-operator">=</span> parseResult.getResult().orElse(<span class="hljs-literal">null</span>);
+
+<span class="hljs-comment">// Extract structural information from AST</span>
+sourceInfo.setThreadRelatedImports(extractThreadRelatedImports(cu));
+sourceInfo.setClasses(extractClassInfo(cu));
+</code></pre>
+<h3 id="2-import-analysis">2. <strong>Import Analysis</strong></h3>
+<pre><code class="language-java"><span class="hljs-comment">// Traverse import declarations in AST</span>
+cu.getImports().forEach(importDecl -&gt; {
+    <span class="hljs-type">String</span> <span class="hljs-variable">importName</span> <span class="hljs-operator">=</span> importDecl.getNameAsString();
+    <span class="hljs-keyword">if</span> (importName.startsWith(<span class="hljs-string">&quot;java.util.concurrent&quot;</span>)) {
+        threadImports.add(importName);
+    }
+});
+</code></pre>
+<h3 id="3-class-structure-extraction">3. <strong>Class Structure Extraction</strong></h3>
+<pre><code class="language-java"><span class="hljs-comment">// Find all class/interface declarations in AST</span>
+cu.findAll(ClassOrInterfaceDeclaration.class).forEach(classDecl -&gt; {
+    <span class="hljs-type">ClassInfo</span> <span class="hljs-variable">classInfo</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ClassInfo</span>();
+    classInfo.setName(classDecl.getNameAsString());
+    classInfo.setInterface(classDecl.isInterface());
+    
+    <span class="hljs-comment">// Extract inheritance from AST nodes</span>
+    classDecl.getExtendedTypes().forEach(extendedType -&gt; 
+        classInfo.getParentClasses().add(extendedType.getNameAsString()));
+});
+</code></pre>
+<h3 id="4-method-analysis">4. <strong>Method Analysis</strong></h3>
+<pre><code class="language-java"><span class="hljs-comment">// Extract method information from AST</span>
+classDecl.findAll(MethodDeclaration.class).forEach(methodDecl -&gt; {
+    <span class="hljs-type">MethodInfo</span> <span class="hljs-variable">methodInfo</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MethodInfo</span>();
+    methodInfo.setName(methodDecl.getNameAsString());
+    methodInfo.setSynchronized(methodDecl.hasModifier(Modifier.Keyword.SYNCHRONIZED));
+    methodInfo.setStatic(methodDecl.hasModifier(Modifier.Keyword.STATIC));
+});
+</code></pre>
+<h3 id="5-field-analysis">5. <strong>Field Analysis</strong></h3>
+<pre><code class="language-java"><span class="hljs-comment">// Extract field information from AST</span>
+classDecl.findAll(FieldDeclaration.class).forEach(fieldDecl -&gt; {
+    fieldDecl.getVariables().forEach(variable -&gt; {
+        <span class="hljs-type">FieldInfo</span> <span class="hljs-variable">fieldInfo</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">FieldInfo</span>();
+        fieldInfo.setName(variable.getNameAsString());
+        fieldInfo.setType(fieldDecl.getElementType().asString());
+        fieldInfo.setVolatile(fieldDecl.hasModifier(Modifier.Keyword.VOLATILE));
+        fieldInfo.setFinal(fieldDecl.hasModifier(Modifier.Keyword.FINAL));
+    });
+});
+</code></pre>
+<h3 id="6-concurrency-pattern-detection">6. <strong>Concurrency Pattern Detection</strong></h3>
+<pre><code class="language-java"><span class="hljs-comment">// ConcurrentCollectionsAnalyzer uses AST-extracted field info</span>
+<span class="hljs-keyword">for</span> (FieldInfo field : classInfo.getFields()) {
+    <span class="hljs-comment">// Check field type from AST for unsafe collections</span>
+    <span class="hljs-keyword">if</span> (field.getType().contains(<span class="hljs-string">&quot;HashMap&quot;</span>) &amp;&amp; !field.isFinal()) {
+        <span class="hljs-comment">// Create concurrency issue based on AST analysis</span>
+        <span class="hljs-type">ConcurrencyIssue</span> <span class="hljs-variable">issue</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ConcurrencyIssue</span>();
+        issue.setDescription(<span class="hljs-string">&quot;HashMap is not thread-safe&quot;</span>);
+        issue.setLineNumber(field.getLineNumber()); <span class="hljs-comment">// From AST position</span>
+    }
+}
+</code></pre>
+<h2 id="ast-data-flow">AST Data Flow</h2>
+<ol>
+<li><strong>Raw Java Code</strong> → JavaParser → <strong>CompilationUnit (AST)</strong></li>
+<li><strong>CompilationUnit</strong> → Visitor Pattern → <strong>Structural Information</strong></li>
+<li><strong>Structural Information</strong> → Analysis Engines → <strong>Concurrency Issues</strong></li>
+<li><strong>Concurrency Issues</strong> → Report Generator → <strong>HTML Report</strong></li>
+</ol>
+<h2 id="benefits-of-ast-based-analysis">Benefits of AST-Based Analysis</h2>
+<ul>
+<li><strong>Accurate</strong>: Direct analysis of code structure, not string matching</li>
+<li><strong>Position-Aware</strong>: Exact line numbers for issues from AST node positions</li>
+<li><strong>Type-Safe</strong>: Access to actual Java language constructs</li>
+<li><strong>Comprehensive</strong>: Can analyze complex patterns like inheritance, generics</li>
+<li><strong>Maintainable</strong>: Changes to Java syntax automatically handled by JavaParser</li>
+</ul>
+<h2 id="ast-vs-alternative-approaches">AST vs. Alternative Approaches</h2>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Accuracy</th>
+<th>Performance</th>
+<th>Maintainability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AST Parsing</strong> ✅</td>
+<td>High</td>
+<td>Medium</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Regex Patterns</td>
+<td>Low</td>
+<td>High</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>String Matching</td>
+<td>Very Low</td>
+<td>High</td>
+<td>Very Low</td>
+</tr>
+<tr>
+<td>Bytecode Analysis</td>
+<td>High</td>
+<td>Low</td>
+<td>Medium</td>
+</tr>
+</tbody>
+</table>
+<p>This project leverages JavaParser's AST capabilities to provide deep, accurate analysis of Java concurrency patterns while maintaining excellent performance and code maintainability.</p>
+
+            
+            
+        </body>
+        </html>

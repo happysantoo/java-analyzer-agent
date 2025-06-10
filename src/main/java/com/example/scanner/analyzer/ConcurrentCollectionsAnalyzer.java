@@ -18,11 +18,14 @@ public class ConcurrentCollectionsAnalyzer {
     private static final Logger logger = LoggerFactory.getLogger(ConcurrentCollectionsAnalyzer.class);
     
     private static final Set<String> UNSAFE_COLLECTIONS = Set.of(
-        "HashMap", "ArrayList", "HashSet", "TreeMap", "TreeSet", "LinkedList"
+        "HashMap", "ArrayList", "HashSet", "TreeMap", "TreeSet", "LinkedList", "Vector"
     );
     
     private static final Set<String> SAFE_COLLECTIONS = Set.of(
-        "ConcurrentHashMap", "CopyOnWriteArrayList", "ConcurrentLinkedQueue"
+        "ConcurrentHashMap", "CopyOnWriteArrayList", "ConcurrentLinkedQueue", 
+        "LinkedBlockingQueue", "ArrayBlockingQueue", "PriorityBlockingQueue",
+        "DelayQueue", "SynchronousQueue", "LinkedTransferQueue", "ConcurrentSkipListMap",
+        "ConcurrentSkipListSet"
     );
     
     public List<ConcurrencyIssue> analyze(JavaSourceInfo sourceInfo, ClassInfo classInfo) {
@@ -38,6 +41,13 @@ public class ConcurrentCollectionsAnalyzer {
         List<ConcurrencyIssue> issues = new ArrayList<>();
         
         for (FieldInfo field : classInfo.getFields()) {
+            // First check if it's a safe collection - if so, skip
+            boolean isSafe = SAFE_COLLECTIONS.stream().anyMatch(safeType -> field.getType().contains(safeType));
+            if (isSafe) {
+                continue;
+            }
+            
+            // Then check if it's an unsafe collection
             for (String unsafeType : UNSAFE_COLLECTIONS) {
                 if (field.getType().contains(unsafeType) && !field.isFinal()) {
                     ConcurrencyIssue issue = new ConcurrencyIssue();
@@ -50,6 +60,7 @@ public class ConcurrentCollectionsAnalyzer {
                         field.getName(), unsafeType));
                     issue.setSuggestedFix(getSafeAlternative(unsafeType));
                     issues.add(issue);
+                    break; // Only report one issue per field
                 }
             }
         }
@@ -62,6 +73,10 @@ public class ConcurrentCollectionsAnalyzer {
             case "HashMap" -> "Use ConcurrentHashMap instead";
             case "ArrayList" -> "Use CopyOnWriteArrayList or Collections.synchronizedList()";
             case "HashSet" -> "Use ConcurrentHashMap.newKeySet() or Collections.synchronizedSet()";
+            case "TreeMap" -> "Use ConcurrentSkipListMap for sorted concurrent map";
+            case "TreeSet" -> "Use ConcurrentSkipListSet for sorted concurrent set";
+            case "LinkedList" -> "Use ConcurrentLinkedQueue for concurrent queue operations";
+            case "Vector" -> "Use CopyOnWriteArrayList or Collections.synchronizedList() instead of legacy Vector";
             default -> "Use thread-safe alternative";
         };
     }

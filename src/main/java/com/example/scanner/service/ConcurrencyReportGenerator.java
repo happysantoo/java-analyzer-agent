@@ -2,7 +2,6 @@ package com.example.scanner.service;
 
 import com.example.scanner.model.*;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +23,10 @@ public class ConcurrencyReportGenerator {
     
     private static final Logger logger = LoggerFactory.getLogger(ConcurrencyReportGenerator.class);
     
-    private final TemplateEngine templateEngine;
+    private final TemplateProcessor templateProcessor;
     
-    public ConcurrencyReportGenerator(TemplateEngine templateEngine) {
-        this.templateEngine = templateEngine;
+    public ConcurrencyReportGenerator(TemplateProcessor templateProcessor) {
+        this.templateProcessor = templateProcessor;
     }
     
     /**
@@ -63,7 +62,7 @@ public class ConcurrencyReportGenerator {
         context.setVariable("totalFiles", results.size());
         
         // Process template and write to file
-        String htmlContent = templateEngine.process("concurrency-report", context);
+        String htmlContent = templateProcessor.process("concurrency-report", context);
         
         try (FileWriter writer = new FileWriter(outputPath)) {
             writer.write(htmlContent);
@@ -80,7 +79,7 @@ public class ConcurrencyReportGenerator {
         context.setVariable("isEmpty", true);
         context.setVariable("generatedAt", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         
-        String htmlContent = templateEngine.process("empty-report", context);
+        String htmlContent = templateProcessor.process("empty-report", context);
         
         try (FileWriter writer = new FileWriter(outputPath)) {
             writer.write(htmlContent);
@@ -98,7 +97,7 @@ public class ConcurrencyReportGenerator {
         context.setVariable("errorMessage", error.getMessage());
         context.setVariable("generatedAt", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         
-        String htmlContent = templateEngine.process("error-report", context);
+        String htmlContent = templateProcessor.process("error-report", context);
         
         try (FileWriter writer = new FileWriter(outputPath)) {
             writer.write(htmlContent);

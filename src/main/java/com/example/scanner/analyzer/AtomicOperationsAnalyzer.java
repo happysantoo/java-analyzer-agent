@@ -30,7 +30,7 @@ public class AtomicOperationsAnalyzer {
         
         // Look for primitive fields that could benefit from atomic alternatives
         for (FieldInfo field : classInfo.getFields()) {
-            if (isPrimitiveCounter(field) && !field.isVolatile()) {
+            if (isPrimitiveCounter(field) && !field.isVolatile() && !field.isFinal()) {
                 ConcurrencyIssue issue = new ConcurrencyIssue();
                 issue.setType("ATOMIC_OPPORTUNITY");
                 issue.setClassName(classInfo.getName());
