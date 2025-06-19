@@ -85,22 +85,40 @@ public class ConcurrencyAnalysisEngine {
         for (ClassInfo classInfo : sourceInfo.getClasses()) {
             
             // Check Thread Safety Issues (race conditions, shared mutable state)
-            allIssues.addAll(threadSafetyAnalyzer.analyze(sourceInfo, classInfo));
+            var threadSafetyIssues = threadSafetyAnalyzer.analyze(sourceInfo, classInfo);
+            if (threadSafetyIssues != null) {
+                allIssues.addAll(threadSafetyIssues);
+            }
             
             // Check Synchronization Problems (deadlocks, synchronized block issues)
-            allIssues.addAll(synchronizationAnalyzer.analyze(sourceInfo, classInfo));
+            var synchronizationIssues = synchronizationAnalyzer.analyze(sourceInfo, classInfo);
+            if (synchronizationIssues != null) {
+                allIssues.addAll(synchronizationIssues);
+            }
             
             // Check Concurrent Collections Usage (ConcurrentHashMap vs HashMap)
-            allIssues.addAll(concurrentCollectionsAnalyzer.analyze(sourceInfo, classInfo));
+            var collectionIssues = concurrentCollectionsAnalyzer.analyze(sourceInfo, classInfo);
+            if (collectionIssues != null) {
+                allIssues.addAll(collectionIssues);
+            }
             
             // Check Executor Framework Usage (thread pool management)
-            allIssues.addAll(executorFrameworkAnalyzer.analyze(sourceInfo, classInfo));
+            var executorIssues = executorFrameworkAnalyzer.analyze(sourceInfo, classInfo);
+            if (executorIssues != null) {
+                allIssues.addAll(executorIssues);
+            }
             
             // Check Atomic Operations (AtomicInteger, AtomicReference usage)
-            allIssues.addAll(atomicOperationsAnalyzer.analyze(sourceInfo, classInfo));
+            var atomicIssues = atomicOperationsAnalyzer.analyze(sourceInfo, classInfo);
+            if (atomicIssues != null) {
+                allIssues.addAll(atomicIssues);
+            }
             
             // Check Lock Usage (ReentrantLock, ReadWriteLock patterns)
-            allIssues.addAll(lockUsageAnalyzer.analyze(sourceInfo, classInfo));
+            var lockIssues = lockUsageAnalyzer.analyze(sourceInfo, classInfo);
+            if (lockIssues != null) {
+                allIssues.addAll(lockIssues);
+            }
         }
         
         result.setIssues(allIssues);
