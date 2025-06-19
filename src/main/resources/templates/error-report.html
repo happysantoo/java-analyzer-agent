@@ -120,10 +120,10 @@
         
         <div class="content">
             <div class="error-details">
-                <h3>Error Information</h3>
-                <p><strong>Error Type:</strong> <span th:text="${errorType}">Unknown Error</span></p>
-                <p><strong>Directory:</strong> <span th:text="${directoryPath}">/path/to/project</span></p>
-                <p><strong>Timestamp:</strong> <span th:text="${timestamp}">timestamp</span></p>
+                <h3>Analysis Error</h3>
+                <p><strong>Error Type:</strong> <span th:text="${errorType != null ? errorType : 'RuntimeException'}">Unknown Error</span></p>
+                <p><strong>Directory:</strong> <span th:text="${directoryPath != null ? directoryPath : 'Not specified'}">/path/to/project</span></p>
+                <p><strong>Timestamp:</strong> <span th:text="${generatedAt}">timestamp</span></p>
                 
                 <div class="error-message" th:text="${errorMessage}">
                     Error details will be displayed here...

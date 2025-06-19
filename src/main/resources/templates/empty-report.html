@@ -103,49 +103,53 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="success-icon">✅</div>
-            <h1>No Concurrency Issues Found</h1>
-            <p>Your Java code appears to be thread-safe!</p>
+            <div class="success-icon">📁</div>
+            <h1>No Java Files Found</h1>
+            <p>No Java files were found in the specified directory.</p>
         </div>
         
         <div class="content">
+            <p style="font-size: 1.1em; color: #666; margin-bottom: 30px;">
+                <strong>Generated on:</strong> <span th:text="${generatedAt}">timestamp</span>
+            </p>
+            
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-number" th:text="${scanStats.totalFiles}">0</div>
+                    <div class="stat-number" th:text="${scanStats != null ? scanStats.totalFiles : 0}">0</div>
                     <div class="stat-label">Files Scanned</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" th:text="${scanStats.totalLines}">0</div>
+                    <div class="stat-number" th:text="${scanStats != null ? scanStats.totalLines : 0}">0</div>
                     <div class="stat-label">Lines Analyzed</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" th:text="${scanStats.totalMethods}">0</div>
+                    <div class="stat-number" th:text="${scanStats != null ? scanStats.totalMethods : 0}">0</div>
                     <div class="stat-label">Methods Checked</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" th:text="${scanStats.scanDurationMs}">0</div>
+                    <div class="stat-number" th:text="${scanStats != null ? scanStats.scanDurationMs : 0}">0</div>
                     <div class="stat-label">Scan Time (ms)</div>
                 </div>
             </div>
             
             <div class="recommendations">
-                <h3>Best Practices to Maintain Thread Safety</h3>
+                <h3>Getting Started</h3>
                 <ul>
-                    <li>Continue using immutable objects where possible</li>
-                    <li>Keep using thread-safe collections (ConcurrentHashMap, CopyOnWriteArrayList)</li>
-                    <li>Maintain proper synchronization for shared mutable state</li>
-                    <li>Use atomic classes for simple concurrent operations</li>
-                    <li>Consider using higher-level concurrency utilities from java.util.concurrent</li>
-                    <li>Regular code reviews focusing on concurrency patterns</li>
-                    <li>Run this scanner periodically as your codebase evolves</li>
+                    <li>Verify the directory path contains Java source files (.java)</li>
+                    <li>Check that the scanner has read permissions for the directory</li>
+                    <li>Ensure Java files are not in hidden or excluded directories</li>
+                    <li>Try scanning the src/main/java directory specifically</li>
+                    <li>Verify that the project structure follows standard conventions</li>
+                    <li>Check if Java files exist in subdirectories</li>
+                    <li>Run the scanner on the correct project root directory</li>
                 </ul>
             </div>
             
             <p style="font-size: 1.1em; color: #666;">
-                <strong>Scanned Directory:</strong> <span th:text="${analysisResult.directoryPath}">/path/to/project</span>
+                <strong>Scanned Directory:</strong> <span th:text="${directoryPath != null ? directoryPath : 'Directory not specified'}">/path/to/project</span>
             </p>
             <p style="font-size: 0.9em; color: #888;">
-                Scan completed at <span th:text="${analysisResult.timestamp}">timestamp</span>
+                Generated on: <span th:text="${generatedAt}">timestamp</span>
             </p>
         </div>
         
