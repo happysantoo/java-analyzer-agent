@@ -10,6 +10,8 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
+import java.nio.file.Paths
+
 class ConcurrentCollectionsAnalyzerSpec extends Specification {
 
     @Subject
@@ -233,7 +235,7 @@ class ConcurrentCollectionsAnalyzerSpec extends Specification {
         def sourceInfo = new JavaSourceInfo()
         sourceInfo.fileName = fileName
         sourceInfo.content = content
-        sourceInfo.filePath = "/test/path/${fileName}"
+        sourceInfo.filePath = Paths.get("test", "path", fileName).toString()
         sourceInfo.totalLines = content.split('\n').length
         return sourceInfo
     }

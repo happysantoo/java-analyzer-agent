@@ -7,6 +7,7 @@ import spock.lang.Unroll
 
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Spock specification for JavaFileDiscoveryService
@@ -88,8 +89,8 @@ class JavaFileDiscoveryServiceSpec extends Specification {
         
         where:
         filePath << [
-            "src/test/java/TestClass.java",
-            "test/SomeTest.java",
+            Paths.get("src", "test", "java", "TestClass.java").toString(),
+            Paths.get("test", "SomeTest.java").toString(),
             "TestClass.java",
             "SomeTests.java",
             "MyClassTest.java"
@@ -117,9 +118,9 @@ class JavaFileDiscoveryServiceSpec extends Specification {
         
         where:
         filePath << [
-            "target/generated-sources/annotations/Generated.java",
-            "build/generated/sources/annotationProcessor/java/main/Generated.java",
-            "generated/Generated.java"
+            Paths.get("target", "generated-sources", "annotations", "Generated.java").toString(),
+            Paths.get("build", "generated", "sources", "annotationProcessor", "java", "main", "Generated.java").toString(),
+            Paths.get("generated", "Generated.java").toString()
         ]
     }
     
@@ -147,11 +148,11 @@ class JavaFileDiscoveryServiceSpec extends Specification {
         createJavaFile("GoodClass.java", "public class GoodClass {}")
         
         // Test file
-        def testDir = Files.createDirectories(tempDir.resolve("src/test/java"))
+        def testDir = Files.createDirectories(tempDir.resolve(Paths.get("src", "test", "java")))
         Files.write(testDir.resolve("TestClass.java"), "public class TestClass {}".bytes)
         
         // Generated file
-        def genDir = Files.createDirectories(tempDir.resolve("target/generated-sources"))
+        def genDir = Files.createDirectories(tempDir.resolve(Paths.get("target", "generated-sources")))
         Files.write(genDir.resolve("Generated.java"), "public class Generated {}".bytes)
         
         // Pattern-excluded file

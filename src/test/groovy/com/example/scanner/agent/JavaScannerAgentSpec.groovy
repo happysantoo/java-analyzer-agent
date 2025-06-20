@@ -131,7 +131,7 @@ class JavaScannerAgentSpec extends Specification {
         where:
         scenario                  | scanPath           | outputPath                              | configPath
         "valid inputs"           | tempDir.toString() | tempDir.resolve("report.html").toString() | "config.yaml"
-        "non-existent scan path" | "/invalid/path"    | tempDir.resolve("report.html").toString() | "config.yaml"
+        "non-existent scan path" | Paths.get("invalid", "path").toString()    | tempDir.resolve("report.html").toString() | "config.yaml"
     }
 
     def "should execute simplified analysis for testing"() {
@@ -181,7 +181,7 @@ class JavaScannerAgentSpec extends Specification {
 
     def "should handle exceptions in simplified analysis"() {
         given: "scan path that will cause error"
-        def scanPath = "/invalid/path"
+        def scanPath = Paths.get("invalid", "path").toString()
 
         and: "file discovery throws exception"
         mockFileDiscoveryService.discoverJavaFiles(_) >> { throw new RuntimeException("Discovery failed") }
@@ -259,7 +259,7 @@ class JavaScannerAgentSpec extends Specification {
         given: "invalid configuration path"
         def scanPath = tempDir.toString()
         def outputPath = tempDir.resolve("report.html").toString()
-        def configPath = "/invalid/config.yaml"
+        def configPath = Paths.get("invalid", "config.yaml").toString()
 
         and: "configuration loading throws exception"
         def configError = new IOException("Config file not found")

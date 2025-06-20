@@ -10,6 +10,7 @@ import spock.lang.Specification
 import spock.lang.Subject
 
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.nio.file.Files
 import java.nio.file.StandardOpenOption
 
@@ -61,7 +62,7 @@ class SpringFilteringEndToEndSpec extends Specification {
 
     def "should load Spring filter configuration from YAML correctly"() {
         when: "loading configuration from the main scanner_config.yaml"
-        String configPath = "src/main/resources/scanner_config.yaml"
+        String configPath = Paths.get("src", "main", "resources", "scanner_config.yaml").toString()
         configuration.loadConfiguration(configPath)
         
         then: "Spring filter should be enabled as configured"
@@ -135,7 +136,7 @@ public class UtilityClass {
 '''.bytes, StandardOpenOption.CREATE)
 
         and: "configuration is set to enable Spring filtering"
-        configuration.loadConfiguration("src/main/resources/scanner_config.yaml")
+        configuration.loadConfiguration(Paths.get("src", "main", "resources", "scanner_config.yaml").toString())
         
         when: "applying configuration to the source analysis service"
         if (configuration.isSpringFilterEnabled()) {

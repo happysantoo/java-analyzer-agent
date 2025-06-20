@@ -27,7 +27,7 @@ class AnalysisResultSpec extends Specification {
     def "should set and get file path correctly"() {
         given: "analysis result and file path"
         def result = new AnalysisResult()
-        def filePath = Paths.get("/test/path/TestClass.java")
+        def filePath = Paths.get("test", "path", "TestClass.java")
 
         when: "setting file path"
         result.setFilePath(filePath)
@@ -39,7 +39,7 @@ class AnalysisResultSpec extends Specification {
     def "should set and get directory path correctly"() {
         given: "analysis result and directory path"
         def result = new AnalysisResult()
-        def directoryPath = "/test/project"
+        def directoryPath = Paths.get("test", "project").toString()
 
         when: "setting directory path"
         result.setDirectoryPath(directoryPath)
@@ -155,7 +155,7 @@ class AnalysisResultSpec extends Specification {
     def "should set and get report file path correctly"() {
         given: "analysis result and report path"
         def result = new AnalysisResult()
-        def reportPath = "/output/concurrency-report.html"
+        def reportPath = Paths.get("output", "concurrency-report.html").toString()
 
         when: "setting report file path"
         result.setReportFilePath(reportPath)

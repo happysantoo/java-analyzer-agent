@@ -15,6 +15,11 @@ import java.nio.file.Paths
 import java.nio.file.Files
 import java.nio.file.StandardOpenOption
 
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.Files
+import java.nio.file.StandardOpenOption
+
 /**
  * Integration test that proves Spring annotation filtering works correctly.
  * This test demonstrates that:
@@ -180,7 +185,7 @@ public class AnotherPlainClass {
         given: "a configuration with Spring filtering enabled"
         
         when: "loading configuration from the test scanner_config.yaml"
-        String configPath = "src/main/resources/scanner_config.yaml"
+        String configPath = Paths.get("src", "main", "resources", "scanner_config.yaml").toString()
         configuration.loadConfiguration(configPath)
         
         then: "Spring filter configuration should be loaded correctly"

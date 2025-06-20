@@ -136,7 +136,7 @@ class ConcurrencyReportGeneratorSpec extends Specification {
 
     def "should handle errors during file writing gracefully"() {
         given: "invalid output path"
-        def invalidPath = "/invalid/path/that/does/not/exist/report.html"
+        def invalidPath = Paths.get("invalid", "path", "that", "does", "not", "exist", "report.html").toString()
         def results = [createAnalysisResult("Test.java", true, 0, 0)]
 
         when: "attempting to generate report"

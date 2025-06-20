@@ -320,7 +320,7 @@ class ConcurrencyAnalysisEngineAIResilienceSpec extends Specification {
     private JavaSourceInfo createJavaSourceInfo(String fileName) {
         def sourceInfo = new JavaSourceInfo()
         sourceInfo.fileName = fileName
-        sourceInfo.filePath = "/test/path/${fileName}"
+        sourceInfo.filePath = Paths.get("test", "path", fileName).toString()
         sourceInfo.classes = [createClassInfo("TestClass")]
         sourceInfo.threadRelatedImports = ["java.util.concurrent.ExecutorService"] as Set
         return sourceInfo
