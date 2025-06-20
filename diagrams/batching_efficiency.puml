@@ -1,0 +1,43 @@
+@startuml
+!define LIGHTBLUE #E1F5FE
+!define LIGHTGREEN #E8F5E8
+!define LIGHTYELLOW #FFF8E1
+
+package "Individual File Processing" LIGHTBLUE {
+  rectangle "File 1" as f1
+  rectangle "File 2" as f2
+  rectangle "File 3" as f3
+  rectangle "..." as dots1
+  rectangle "File 80" as f80
+  
+  rectangle "AI Call 1" as ai1
+  rectangle "AI Call 2" as ai2
+  rectangle "AI Call 3" as ai3
+  rectangle "..." as dots2
+  rectangle "AI Call 80" as ai80
+  
+  f1 --> ai1
+  f2 --> ai2
+  f3 --> ai3
+  f80 --> ai80
+}
+
+package "Batched Processing" LIGHTGREEN {
+  rectangle "Batch 1\n(10 files)" as b1
+  rectangle "Batch 2\n(10 files)" as b2
+  rectangle "..." as dots3
+  rectangle "Batch 8\n(10 files)" as b8
+  
+  rectangle "AI Call A" as aiA
+  rectangle "AI Call B" as aiB
+  rectangle "..." as dots4
+  rectangle "AI Call H" as aiH
+  
+  b1 --> aiA
+  b2 --> aiB
+  b8 --> aiH
+}
+
+note bottom of LIGHTBLUE : Traditional: 80 API Calls
+note bottom of LIGHTGREEN : Batched: 8 API Calls\n90% Reduction
+@enduml

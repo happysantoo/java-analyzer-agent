@@ -1,0 +1,25 @@
+@startuml
+start
+:AI Request;
+if (Network Error?) then (yes)
+  :Exponential Backoff;
+  :Retry (max 3 times);
+  if (Still Failing?) then (yes)
+    :Fallback to Rule-Based;
+    stop
+  endif
+endif
+
+if (Rate Limited?) then (yes)
+  :Wait for Rate Reset;
+  :Redistribute Batch;
+endif
+
+if (Timeout?) then (yes)
+  :Split Large Batch;
+  :Reprocess Smaller Batches;
+endif
+
+:Process Successful Response;
+stop
+@enduml

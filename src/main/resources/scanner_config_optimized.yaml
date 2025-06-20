@@ -1,0 +1,88 @@
+scanner:
+  exclude-test-files: true
+  exclude-generated-code: true
+  max-file-size: 10000000
+  enable-ai-recommendations: true
+  ai-model: "claude-3-sonnet"
+  
+  # AI OPTIMIZATION CONFIGURATION
+  ai-optimization:
+    # Batching strategy settings
+    batching:
+      enabled: true
+      max-batch-size: 10              # Files per batch
+      max-issues-per-batch: 50        # Total issues per batch  
+      max-prompt-length: 8000         # Token limit consideration
+    
+    # Smart filtering settings
+    filtering:
+      enabled: true
+      min-issues-for-ai: 2            # Skip AI for single simple issues
+      min-severity-score: 3           # Weighted severity threshold
+      max-issues-for-ai: 20           # Skip AI for extremely complex files
+      prefer-ai-for-spring: true      # Prioritize Spring components
+    
+    # Caching settings
+    caching:
+      enabled: true
+      max-cache-entries: 1000         # Maximum cached patterns
+      cache-ttl-hours: 24             # Cache time-to-live
+      enable-pattern-normalization: true
+    
+    # Fallback recommendations
+    fallback:
+      enabled: true
+      use-template-recommendations: true
+  
+  # Spring annotation filtering configuration
+  spring-filter:
+    enabled: true   # Set to true to analyze only Spring-managed classes
+    annotations:    # Configurable list of Spring annotations to filter
+      - "Service"
+      - "Component" 
+      - "Repository"
+      - "Controller"
+      - "RestController"
+      - "Configuration"
+  exclude-patterns:
+    - "/target/"
+    - "/build/"
+    - ".git"
+    - "/node_modules/"
+
+# Concurrency analysis rules configuration
+analysis:
+  thread-safety:
+    check-race-conditions: true
+    check-shared-mutable-state: true
+    check-unsafe-publication: true
+  
+  synchronization:
+    check-deadlock-potential: true
+    check-synchronized-blocks: true
+    check-double-checked-locking: true
+  
+  collections:
+    warn-unsafe-collections: true
+    suggest-concurrent-alternatives: true
+  
+  executor-framework:
+    check-thread-pool-management: true
+    check-proper-shutdown: true
+  
+  atomic-operations:
+    suggest-atomic-alternatives: true
+    check-compare-and-swap: true
+  
+  locks:
+    check-lock-ordering: true
+    check-try-finally-pattern: true
+    check-timeout-usage: true
+
+# Performance monitoring
+monitoring:
+  ai-optimization:
+    log-statistics: true
+    track-cache-hit-rate: true
+    track-ai-call-reduction: true
+    alert-on-high-ai-usage: true

@@ -1,0 +1,26 @@
+@startuml
+!define RECTANGLE class
+
+package "Traditional Analysis Engine" {
+  [File Scanner] --> [Issue Detector]
+  [Issue Detector] --> [AI Service]
+  [AI Service] --> [Report Generator]
+  note bottom of [AI Service] : 1 API call per file\n600-800 calls per project
+}
+
+package "Optimized Analysis Engine" {
+  [File Scanner] --> [Issue Detector]
+  [Issue Detector] --> [Smart Filter]
+  [Smart Filter] --> [Cache Manager]
+  [Cache Manager] --> [Batch Processor]
+  [Batch Processor] --> [AI Service]
+  [AI Service] --> [Report Generator]
+  note bottom of [Batch Processor] : 8-12 API calls per project\n95% reduction achieved
+}
+
+cloud "AI API" {
+  [GPT-4/Claude]
+}
+
+[AI Service] --> [GPT-4/Claude]
+@enduml

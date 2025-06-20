@@ -1,0 +1,32 @@
+@startuml
+!define LIGHTBLUE #E1F5FE
+!define LIGHTGREEN #E8F5E8
+
+title Cache Hit Rate Progression
+
+rectangle "Analysis Run 1 (Cold Cache)" LIGHTBLUE {
+  :Cache Hit Rate: 0%
+  :AI Calls: 240
+  :Cache Entries: 0 → 45
+}
+
+rectangle "Analysis Run 2 (Warming)" LIGHTBLUE {
+  :Cache Hit Rate: 25%
+  :AI Calls: 180
+  :Cache Entries: 45 → 65
+}
+
+rectangle "Analysis Run 3 (Warm)" LIGHTGREEN {
+  :Cache Hit Rate: 45%
+  :AI Calls: 132
+  :Cache Entries: 65 → 75
+}
+
+rectangle "Analysis Run 4 (Hot)" LIGHTGREEN {
+  :Cache Hit Rate: 65%
+  :AI Calls: 84
+  :Cache Entries: 75 → 80
+}
+
+note bottom : Progressive Improvement\n30-40% Additional Reduction\nthrough Intelligent Caching
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+start
+:Receive Filtered Files;
+:Group by Similarity;
+note right: Factors:\n- Issue complexity\n- File types\n- Spring components\n- Prompt size limits
+
+while (Has Unbatched Files?) is (yes)
+  :Create Batch (max 10 files);
+  :Calculate Total Prompt Size;
+  if (Exceeds Token Limit?) then (yes)
+    :Reduce Batch Size;
+  endif
+  :Generate Structured Prompt;
+  :Submit Batch to AI;
+  :Parse Batch Response;
+  :Distribute Recommendations;
+endwhile (no)
+
+:Combine All Results;
+stop
+@enduml

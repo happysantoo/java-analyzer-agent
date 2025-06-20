@@ -1,0 +1,19 @@
+@startuml
+start
+:Receive Analysis Request;
+:Generate Pattern Key;
+note right: Based on:\n- Issue types\n- Issue severity\n- Code structure\n- Spring annotations
+
+:Check Pattern Cache;
+if (Cache Hit?) then (yes)
+  :Return Cached Recommendations;
+  :Update Cache Statistics;
+  stop
+else (Cache Miss)
+  :Call AI Service;
+  :Receive AI Recommendations;
+  :Cache Pattern + Recommendations;
+  :Return Recommendations;
+  stop
+endif
+@enduml

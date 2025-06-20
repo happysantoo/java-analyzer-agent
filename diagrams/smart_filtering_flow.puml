@@ -1,0 +1,25 @@
+@startuml
+start
+:Analyze File Issues;
+if (No Issues Found?) then (yes)
+  :Skip AI Analysis;
+  stop
+endif
+
+:Calculate Complexity Score;
+note right: Factors:\n- Issue count\n- Issue types\n- Spring annotations\n- Code patterns
+
+if (Complexity Score < Threshold?) then (yes)
+  :Apply Auto-Recommendations;
+  stop
+elseif (Issues > Max Threshold?) then (yes)
+  :Flag for Manual Review;
+  stop
+else (Medium-High Complexity)
+  :Queue for AI Analysis;
+endif
+
+:Prioritize by Severity;
+:Send to Batching Engine;
+stop
+@enduml

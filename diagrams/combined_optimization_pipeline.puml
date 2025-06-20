@@ -1,0 +1,37 @@
+@startuml
+!define RECTANGLE class
+
+start
+:Source Code Files\n(1000 files);
+
+:Traditional Analysis\n(Issue Detection);
+note right: Identifies concurrency issues\nusing static analysis rules
+
+:Smart Filtering;
+if (Critical/Complex Issues?) then (yes)
+  :High-Value Queue\n(240 files);
+else (no)
+  :Auto-Recommendations\n(360 files);
+  stop
+endif
+
+:Pattern Caching Check;
+if (Pattern Cached?) then (yes)
+  :Return Cached Result\n(72 files);
+  stop
+else (no)
+  :Cache Miss Queue\n(168 files);
+endif
+
+:Intelligent Batching;
+:Create 17 Batches\n(~10 files each);
+
+:AI API Calls\n(17 requests);
+
+:Parse & Distribute\nRecommendations;
+
+:Comprehensive Report\n(1000 files analyzed);
+stop
+
+note right of [AI API Calls] : 95% Reduction:\n800 → 17 calls
+@enduml
