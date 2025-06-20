@@ -57,6 +57,17 @@ public class JavaScannerAgent {
             configuration.loadConfiguration(configPath);
             logger.info("Loaded concurrency analysis configuration");
             
+            // Apply Spring filter configuration
+            if (configuration.isSpringFilterEnabled()) {
+                sourceAnalysisService.setSpringFilterEnabled(true);
+                sourceAnalysisService.setSpringAnnotations(configuration.getSpringAnnotations());
+                logger.info("Spring annotation filtering enabled - analyzing only Spring-managed classes with annotations: {}", 
+                           configuration.getSpringAnnotations());
+            } else {
+                sourceAnalysisService.setSpringFilterEnabled(false);
+                logger.info("Spring annotation filtering disabled - analyzing all classes");
+            }
+            
             // Java File Discovery (Activity Diagram Step 2)
             List<Path> javaFiles = fileDiscoveryService.discoverJavaFiles(Paths.get(scanPath));
             if (javaFiles.isEmpty()) {

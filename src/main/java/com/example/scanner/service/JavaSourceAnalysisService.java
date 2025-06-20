@@ -55,6 +55,9 @@ public class JavaSourceAnalysisService {
     // Configuration flag to enable/disable Spring filtering
     private boolean enableSpringFilter = false;
     
+    // Configurable Spring annotations (can be overridden from configuration)
+    private Set<String> configurableSpringAnnotations = new HashSet<>(SPRING_MANAGED_ANNOTATIONS);
+    
     /**
      * Analyzes a list of Java files and extracts source information for concurrency analysis.
      */
@@ -232,8 +235,8 @@ public class JavaSourceAnalysisService {
         classDecl.getAnnotations().forEach(annotation -> {
             String annotationName = annotation.getNameAsString();
             
-            // Check if it's a Spring managed annotation
-            if (SPRING_MANAGED_ANNOTATIONS.contains(annotationName)) {
+            // Check if it's a Spring managed annotation (using configurable annotations)
+            if (configurableSpringAnnotations.contains(annotationName)) {
                 classInfo.addSpringAnnotation(annotationName);
                 logger.debug("Found Spring annotation @{} on class: {}", annotationName, classInfo.getName());
             }
@@ -247,6 +250,15 @@ public class JavaSourceAnalysisService {
     public void setSpringFilterEnabled(boolean enabled) {
         this.enableSpringFilter = enabled;
         logger.info("Spring annotation filtering {}", enabled ? "enabled" : "disabled");
+    }
+    
+    /**
+     * Configures which Spring annotations to filter for.
+     * @param annotations List of annotation names (without @) to consider as Spring-managed
+     */
+    public void setSpringAnnotations(List<String> annotations) {
+        this.configurableSpringAnnotations = new HashSet<>(annotations);
+        logger.info("Configured Spring annotations for filtering: {}", annotations);
     }
     
     /**

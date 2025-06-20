@@ -27,6 +27,10 @@ public class ScannerConfiguration {
     private boolean enableAIRecommendations = true;
     private String aiModel = "claude-3-sonnet";
     
+    // Spring filtering configuration
+    private boolean springFilterEnabled = false;
+    private List<String> springAnnotations = List.of("Service", "Component", "Repository", "Controller", "RestController", "Configuration");
+    
     /**
      * Loads configuration from YAML file.
      */
@@ -47,6 +51,16 @@ public class ScannerConfiguration {
                 if (scannerConfig.containsKey("exclude-patterns")) {
                     excludePatterns = (List<String>) scannerConfig.get("exclude-patterns");
                 }
+                
+                // Load Spring filter configuration
+                if (scannerConfig.containsKey("spring-filter")) {
+                    Map<String, Object> springFilterConfig = (Map<String, Object>) scannerConfig.get("spring-filter");
+                    springFilterEnabled = (Boolean) springFilterConfig.getOrDefault("enabled", springFilterEnabled);
+                    
+                    if (springFilterConfig.containsKey("annotations")) {
+                        springAnnotations = (List<String>) springFilterConfig.get("annotations");
+                    }
+                }
             }
         } catch (IOException e) {
             // Use default configuration if file not found
@@ -61,4 +75,6 @@ public class ScannerConfiguration {
     public int getMaxFileSize() { return maxFileSize; }
     public boolean isEnableAIRecommendations() { return enableAIRecommendations; }
     public String getAiModel() { return aiModel; }
+    public boolean isSpringFilterEnabled() { return springFilterEnabled; }
+    public List<String> getSpringAnnotations() { return springAnnotations; }
 }

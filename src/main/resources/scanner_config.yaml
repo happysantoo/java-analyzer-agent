@@ -6,7 +6,7 @@ scanner:
   ai-model: "claude-3-sonnet"
   # Spring annotation filtering configuration
   spring-filter:
-    enabled: false  # Set to true to analyze only Spring-managed classes
+    enabled: true   # Set to true to analyze only Spring-managed classes
     annotations:    # Configurable list of Spring annotations to filter
       - "Service"
       - "Component" 

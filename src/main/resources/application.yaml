@@ -2,6 +2,11 @@ spring:
   application:
     name: java-concurrency-scanner
   
+  # Disable OpenAI autoconfiguration
+  autoconfigure:
+    exclude:
+      - org.springframework.ai.autoconfigure.openai.OpenAiAutoConfiguration
+  
   ai:
     anthropic:
       api-key: ${ANTHROPIC_API_KEY}

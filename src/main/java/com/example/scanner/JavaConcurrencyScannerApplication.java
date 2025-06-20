@@ -5,8 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @SpringBootApplication
 public class JavaConcurrencyScannerApplication {
@@ -58,8 +60,9 @@ public class JavaConcurrencyScannerApplication {
     }
     
     @Bean
-    public ChatClient chatClient(ChatModel chatModel) {
-        // This will be auto-configured by Spring Boot
+    @Primary
+    public ChatClient chatClient(@Qualifier("anthropicChatModel") ChatModel chatModel) {
+        // Use Anthropic Claude as the primary chat model
         return ChatClient.builder(chatModel).build();
     }
 }
